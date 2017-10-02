@@ -13,8 +13,7 @@ spec:
         component: elasticsearch
         role: client
     spec:
-      serviceAccount: elasticsearch
-      initContainers:
+      initContainers: 
       - name: init-sysctl
         image: busybox
         imagePullPolicy: IfNotPresent
@@ -24,26 +23,24 @@ spec:
       containers:
       - name: es-client
         securityContext:
-          capabilities:
-            add:
-              - IPC_LOCK
-              - SYS_RESOURCE
-        image: quay.io/pires/docker-elasticsearch-kubernetes:1.7.1-4
+          privileged: true 
+          ## Fix for DNM, we only need this:
+          # capabilities:
+          #   add:
+          #     - IPC_LOCK
+          #     - SYS_RESOURCE
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.6.2
+        command: ["bin/elasticsearch"]
+        args: 
+          [
+          "-Ecluster.name=myesdb",
+          "-Enode.master=false",
+          "-Enode.data=false",
+          "-Ehttp.enabled=true",
+          "-Ediscovery.zen.ping.unicast.hosts=elasticsearch-discovery",
+          "-Expack.security.enabled=false"
+          ]
         env:
-        - name: KUBERNETES_CA_CERTIFICATE_FILE
-          value: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: "CLUSTER_NAME"
-          value: "myesdb"
-        - name: NODE_MASTER
-          value: "false"
-        - name: NODE_DATA
-          value: "false"
-        - name: HTTP_ENABLE
-          value: "true"
         - name: "ES_JAVA_OPTS"
           value: "-Xms1g -Xmx1g"
         resources:
@@ -59,7 +56,7 @@ spec:
           name: transport
           protocol: TCP
         volumeMounts:
-        - mountPath: /data
+        - mountPath: /usr/share/elasticsearch/data
           name: storage
       volumes:
       - name: storage
