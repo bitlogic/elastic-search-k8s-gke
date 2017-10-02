@@ -1,7 +1,7 @@
 # Elasticsearch for Kubernetes
 
 Kubernetes makes it trivial for anyone to easily build and scale [Elasticsearch](http://www.elasticsearch.org/) clusters. Here, you'll find how to do so.
-Current Elasticsearch version is `1.7.1`.
+Current Elasticsearch version is `5.6.2`.
 
 Before we start, one needs to know that Elasticsearch best-practices recommend to separate nodes in three roles:
 * `Master` nodes - intended for clustering management only, no data, no HTTP API
@@ -10,16 +10,15 @@ Before we start, one needs to know that Elasticsearch best-practices recommend t
 
 This is enforced throughout this document.
 
-<img src="http://kubernetes.io/kubernetes/img/warning.png" alt="WARNING" width="25" height="25"> Current pod descriptors use an `emptyDir` for storing data in each data node container. This is meant to be for the sake of simplicity and [should be adapted according to your storage needs](../../../docs/design/persistent-storage.md).
+<img src="http://kubernetes.io/kubernetes/img/warning.png" alt="WARNING" width="25" height="25"> Current pod descriptors use an `emptyDir` for storing data in each data node container. This is meant to be for the sake of simplicity and [should be adapted according to your storage needs](https://kubernetes.io/docs/concepts/storage/persistent-volumes/).
 
 ## Docker image
 
-This example uses [this pre-built image](https://github.com/pires/docker-elasticsearch-kubernetes). Feel free to fork and update it to fit your own needs, but keep in mind that you will need to change Kubernetes descriptors accordingly.
+This example uses [an official image](https://www.docker.elastic.co). Feel free to fork and [update it to fit your own needs](https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#_c_customized_image), but keep in mind that you will need to change Kubernetes descriptors accordingly.
 
 ## Deploy
 
 ```
-kubectl create -f examples/elasticsearch/production_cluster/service-account.yaml
 kubectl create -f examples/elasticsearch/production_cluster/es-discovery-svc.yaml
 kubectl create -f examples/elasticsearch/production_cluster/es-svc.yaml
 kubectl create -f examples/elasticsearch/production_cluster/es-master-rc.yaml
@@ -182,8 +181,3 @@ You should see something similar to the following:
   "number_of_in_flight_fetch" : 0
 }
 ```
-
-
-<!-- BEGIN MUNGE: GENERATED_ANALYTICS -->
-[![Analytics](https://kubernetes-site.appspot.com/UA-36037335-10/GitHub/examples/elasticsearch/production_cluster/README.md?pixel)]()
-<!-- END MUNGE: GENERATED_ANALYTICS -->
